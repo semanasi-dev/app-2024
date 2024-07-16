@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/sasiqrcode.iml" filepath="$PROJECT_DIR$/sasiqrcode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/sasiqrcode_android.iml" filepath="$PROJECT_DIR$/android/sasiqrcode_android.iml" />
+    </modules>
+  </component>
+</project>
