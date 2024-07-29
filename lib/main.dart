@@ -7,7 +7,9 @@ import 'package:sasiqrcode/screens/qr_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 

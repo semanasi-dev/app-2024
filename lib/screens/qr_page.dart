@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qrcode_reader_web/qrcode_reader_web.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
+import 'package:sasiqrcode/routes/routes.dart';
 
 class QRPage extends StatefulWidget {
   const QRPage({super.key});
@@ -16,7 +17,7 @@ class _QRPageState extends State<QRPage> {
   GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRCodeCapture? data;
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final DatabaseReference _database = FirebaseDatabase.instance.ref('users');
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +38,11 @@ class _QRPageState extends State<QRPage> {
                   width: 400,
                   height: 400,
                   child: QRCodeReaderTransparentWidget(
-                    onDetect: (QRCodeCapture capture) => setState(
-                        () async => await atualizaPontuacao(capture.raw)),
+                    onDetect: (QRCodeCapture capture) async {
+                      await atualizaPontuacao(capture.raw);
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushNamed(context, Routes.congratulations);
+                    },
                     targetSize: 250,
                     //radius: 20,
                   ),
@@ -94,28 +98,27 @@ class _QRPageState extends State<QRPage> {
   Future<void> atualizaPontuacao(String pontos) async {
     User userUid = Provider.of<UserModel>(context, listen: false).userUid!;
 
-    DocumentReference documentReference =
-        _firestore.collection('users').doc(userUid.uid);
+    try {
+      DatabaseReference userRef = _database.child(userUid.uid);
 
-    DocumentSnapshot documentSnapshot = await documentReference.get();
+      DataSnapshot snapshot = await userRef.get();
 
-    if (documentSnapshot.exists) {
-      int currentValue = documentSnapshot['pontos'] ?? 0;
-      int updatedValue = currentValue + int.tryParse(pontos)!;
+      if (snapshot.exists) {
+        int currentPoints = snapshot.child('pontos').value as int? ?? 0;
+        int updatedPoints = currentPoints + (int.tryParse(pontos) ?? 0);
 
-      try {
-        await documentReference.update({'pontos': updatedValue});
-      } catch (e) {
-        print('Error updating document: $e');
-      }
-    } else {
-      try {
-        await documentReference.set({
+        await userRef.update({
+          'pontos': updatedPoints,
+        });
+      } else {
+        await userRef.set({
           'pontos': pontos,
         });
-      } catch (e) {
-        print('Error creating document: $e');
+
+        print('User created successfully');
       }
+    } catch (e) {
+      print('Error updating or creating user: $e');
     }
   }
 }

@@ -1,19 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
-import 'package:sasiqrcode/service/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
-  final AuthenticationService authService;
-  const LoginPage({super.key, required this.authService});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final DatabaseReference database = FirebaseDatabase.instance.ref('users');
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.sizeOf(context);
@@ -95,12 +96,8 @@ class _LoginPageState extends State<LoginPage> {
                           height: screenSize.height * 0.05,
                           child: ElevatedButton(
                             onPressed: () async {
-                              var login = await signInWithGoogle();
-                              if (login.user != null) {
-                                Provider.of<UserModel>(context, listen: false)
-                                    .setUserUid(login.user);
-                                Navigator.pushNamed(context, Routes.home);
-                              }
+                              UserCredential login = await signInWithGoogle();
+                              await verificaUsuarioExistente(login);
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -140,8 +137,32 @@ class _LoginPageState extends State<LoginPage> {
 
     googleProvider
         .addScope('https://www.googleapis.com/auth/contacts.readonly');
-    googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
+    //googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
 
     return await FirebaseAuth.instance.signInWithPopup(googleProvider);
+  }
+
+  Future<void> verificaUsuarioExistente(UserCredential login) async {
+    if (login.user != null) {
+      Provider.of<UserModel>(context, listen: false).setUserUid(login.user);
+      try {
+        DatabaseReference userRef = database.child(login.user!.uid);
+
+        DataSnapshot snapshot = await userRef.get();
+
+        if (!snapshot.exists) {
+          await userRef.set({
+            'nome': login.user!.displayName,
+            'email': login.user!.email,
+            'pontos': 0,
+          });
+        }
+        // ignore: use_build_context_synchronously
+        Navigator.pushNamed(context, Routes.home);
+      } catch (e) {
+        // ignore: avoid_print
+        print(e);
+      }
+    }
   }
 }
