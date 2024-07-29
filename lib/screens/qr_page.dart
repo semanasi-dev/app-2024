@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qrcode_reader_web/qrcode_reader_web.dart';
+import 'package:sasiqrcode/provider/user_model.dart';
 
 class QRPage extends StatefulWidget {
   const QRPage({super.key});
@@ -10,8 +14,9 @@ class QRPage extends StatefulWidget {
 
 class _QRPageState extends State<QRPage> {
   GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-
   QRCodeCapture? data;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +37,10 @@ class _QRPageState extends State<QRPage> {
                   width: 400,
                   height: 400,
                   child: QRCodeReaderTransparentWidget(
-                    onDetect: (QRCodeCapture capture) =>
-                        setState(() => data = capture),
+                    onDetect: (QRCodeCapture capture) => setState(
+                        () async => await atualizaPontuacao(capture.raw)),
                     targetSize: 250,
-                    radius: 20,
+                    //radius: 20,
                   ),
                 ),
               ),
@@ -84,5 +89,33 @@ class _QRPageState extends State<QRPage> {
         },
       ),
     );
+  }
+
+  Future<void> atualizaPontuacao(String pontos) async {
+    User userUid = Provider.of<UserModel>(context, listen: false).userUid!;
+
+    DocumentReference documentReference =
+        _firestore.collection('users').doc(userUid.uid);
+
+    DocumentSnapshot documentSnapshot = await documentReference.get();
+
+    if (documentSnapshot.exists) {
+      int currentValue = documentSnapshot['pontos'] ?? 0;
+      int updatedValue = currentValue + int.tryParse(pontos)!;
+
+      try {
+        await documentReference.update({'pontos': updatedValue});
+      } catch (e) {
+        print('Error updating document: $e');
+      }
+    } else {
+      try {
+        await documentReference.set({
+          'pontos': pontos,
+        });
+      } catch (e) {
+        print('Error creating document: $e');
+      }
+    }
   }
 }

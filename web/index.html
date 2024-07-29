@@ -21,18 +21,26 @@
   <link rel="manifest" href="manifest.json">
 
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-
-  <script type="module">
-
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
-
-    const analytics = getAnalytics(app);
-  </script>
 </head>
 
 <body>
   <script src="flutter_bootstrap.js" async></script>
+
+  <script>
+    import { initializeApp } from "firebase/app";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore.js";
+
+    import { getAnalytics } from "firebase/analytics";
+
+    const firebaseConfig = {
+
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app); 
+  </script>
 </body>
 
 </html>
