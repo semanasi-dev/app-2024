@@ -40,13 +40,29 @@ class CongratulationsStatePage extends State<CongratulationsPage> {
                   ),
                   Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Parabens $total'),
+                        Text(
+                          'Parabens $total',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Cristik',
+                            fontSize: 40,
+                          ),
+                        ),
                         ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, Routes.home);
-                            },
-                            child: Text('Voltar a home'))
+                          onPressed: () {
+                            Navigator.pushNamed(context, Routes.home);
+                          },
+                          child: const Text(
+                            'Voltar a home',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Cristik',
+                              fontSize: 30,
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   )

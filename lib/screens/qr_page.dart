@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qrcode_reader_web/qrcode_reader_web.dart';
@@ -18,6 +19,11 @@ class _QRPageState extends State<QRPage> {
   QRCodeCapture? data;
 
   final DatabaseReference _database = FirebaseDatabase.instance.ref('users');
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +46,10 @@ class _QRPageState extends State<QRPage> {
                   child: QRCodeReaderTransparentWidget(
                     onDetect: (QRCodeCapture capture) async {
                       await atualizaPontuacao(capture.raw);
-                      // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, Routes.congratulations);
                     },
-                    targetSize: 250,
-                    //radius: 20,
+                    borderRadius: 20,
+                    targetSize: 0,
                   ),
                 ),
               ),
@@ -64,10 +69,12 @@ class _QRPageState extends State<QRPage> {
                       'Aponte a camera para o QR code para garantir os pontos',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.none),
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        decoration: TextDecoration.none,
+                        fontFamily: 'Cristik',
+                      ),
                     ),
                   ],
                 ),
@@ -109,16 +116,18 @@ class _QRPageState extends State<QRPage> {
 
         await userRef.update({
           'pontos': updatedPoints,
+          'ultimaCaptura': DateTime.now().toString(),
         });
       } else {
         await userRef.set({
           'pontos': pontos,
+          'ultimaCaptura': DateTime.now().toString(),
         });
-
-        print('User created successfully');
       }
     } catch (e) {
-      print('Error updating or creating user: $e');
+      if (kDebugMode) {
+        print('Error updating or creating user: $e');
+      }
     }
   }
 }

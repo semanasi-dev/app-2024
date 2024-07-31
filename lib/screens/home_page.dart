@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,6 +13,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String? total;
+
+  @override
+  void initState() {
+    super.initState();
+    totalDePontos();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.sizeOf(context);
@@ -61,6 +73,7 @@ class _HomePageState extends State<HomePage> {
                                     decoration: TextDecoration.none,
                                     color: Colors.black,
                                     fontSize: screenSize.width * 0.08,
+                                    fontFamily: 'Cristik',
                                   ),
                                 )
                               ],
@@ -99,10 +112,29 @@ class _HomePageState extends State<HomePage> {
                                     decoration: TextDecoration.none,
                                     color: Colors.black,
                                     fontSize: screenSize.width * 0.08,
+                                    fontFamily: 'Cristik',
                                   ),
                                 )
                               ],
                             ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: screenSize.height * 0.05,
+                        ),
+                        Text(
+                          total!,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontFamily: 'Cristik'),
+                        ),
+                        const Text(
+                          'Pontuacao atual',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontFamily: 'Cristik',
                           ),
                         ),
                       ],
@@ -115,5 +147,19 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> totalDePontos() async {
+    User userUid = Provider.of<UserModel>(context, listen: false).userUid!;
+
+    final DatabaseReference database = FirebaseDatabase.instance.ref('users');
+
+    DatabaseReference userRef = database.child(userUid.uid);
+    DataSnapshot snapshot = await userRef.get();
+
+    Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+    setState(() {
+      total = data['pontos'].toString();
+    });
   }
 }

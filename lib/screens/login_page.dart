@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Colors.white,
                                 decoration: TextDecoration.none,
                                 fontSize: 30,
+                                fontFamily: 'Cristik',
                               ),
                             ),
                             const Text(
@@ -65,27 +66,32 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Colors.white,
                                 decoration: TextDecoration.none,
                                 fontSize: 30,
+                                fontFamily: 'Cristik',
                               ),
                             ),
                           ],
                         ),
                         const Text(
                           'Semana Academica Sistemas de Informacao',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
                             decoration: TextDecoration.none,
                             fontSize: 18,
+                            fontFamily: 'Cristik',
                           ),
                         ),
                         SizedBox(
                           height: screenSize.height * 0.05,
                         ),
                         const Text(
-                          'autentique com google para comecar a pontuar',
+                          'autentique com google para iniciar',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
                             decoration: TextDecoration.none,
                             fontSize: 18,
+                            fontFamily: 'Cristik',
                           ),
                         ),
                         SizedBox(
@@ -137,7 +143,6 @@ class _LoginPageState extends State<LoginPage> {
 
     googleProvider
         .addScope('https://www.googleapis.com/auth/contacts.readonly');
-    //googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
 
     return await FirebaseAuth.instance.signInWithPopup(googleProvider);
   }
@@ -145,24 +150,19 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> verificaUsuarioExistente(UserCredential login) async {
     if (login.user != null) {
       Provider.of<UserModel>(context, listen: false).setUserUid(login.user);
-      try {
-        DatabaseReference userRef = database.child(login.user!.uid);
 
-        DataSnapshot snapshot = await userRef.get();
+      DatabaseReference userRef = database.child(login.user!.uid);
 
-        if (!snapshot.exists) {
-          await userRef.set({
-            'nome': login.user!.displayName,
-            'email': login.user!.email,
-            'pontos': 0,
-          });
-        }
-        // ignore: use_build_context_synchronously
-        Navigator.pushNamed(context, Routes.home);
-      } catch (e) {
-        // ignore: avoid_print
-        print(e);
+      DataSnapshot snapshot = await userRef.get();
+
+      if (!snapshot.exists) {
+        await userRef.set({
+          'nome': login.user!.displayName,
+          'email': login.user!.email,
+          'pontos': 0,
+        });
       }
+      Navigator.pushNamed(context, Routes.home);
     }
   }
 }

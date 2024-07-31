@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
-import 'package:sasiqrcode/screens/qr_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    
+  );
 
   runApp(const MyApp());
 }
@@ -22,7 +23,6 @@ class MyApp extends StatelessWidget {
       create: (_) => UserModel(),
       child: const MaterialApp(
         title: 'MaterCode',
-        home: QRPage(),
         initialRoute: Routes.login,
         debugShowCheckedModeBanner: false,
         onGenerateRoute: RouterApp.generateRoute,
