@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
+
 import 'package:sasiqrcode/routes/routes.dart';
 
 class HomePage extends StatefulWidget {
@@ -68,12 +70,9 @@ class _HomePageState extends State<HomePage> {
                                   size: screenSize.width * 0.2,
                                 ),
                                 Text(
-                                  'Informacoes',
-                                  style: TextStyle(
-                                    decoration: TextDecoration.none,
+                                  'informações',
+                                  style: GoogleFonts.robotoMono(
                                     color: Colors.black,
-                                    fontSize: screenSize.width * 0.08,
-                                    fontFamily: 'Cristik',
                                   ),
                                 )
                               ],
@@ -108,11 +107,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   'Ler QrCode',
-                                  style: TextStyle(
-                                    decoration: TextDecoration.none,
+                                  style: GoogleFonts.robotoMono(
                                     color: Colors.black,
-                                    fontSize: screenSize.width * 0.08,
-                                    fontFamily: 'Cristik',
                                   ),
                                 )
                               ],
@@ -124,17 +120,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Text(
                           total!,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 40,
-                              fontFamily: 'Cristik'),
-                        ),
-                        const Text(
-                          'Pontuacao atual',
-                          style: TextStyle(
+                          style: GoogleFonts.robotoMono(
                             color: Colors.white,
-                            fontSize: 30,
-                            fontFamily: 'Cristik',
+                          ),
+                        ),
+                        Text(
+                          'Pontuacao atual',
+                          style: GoogleFonts.robotoMono(
+                            color: Colors.white,
                           ),
                         ),
                       ],

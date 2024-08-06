@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
@@ -44,22 +45,18 @@ class CongratulationsStatePage extends State<CongratulationsPage> {
                       children: [
                         Text(
                           'Parabens $total',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Cristik',
-                            fontSize: 40,
+                          style: GoogleFonts.robotoMono(
+                            color: Colors.black,
                           ),
                         ),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pushNamed(context, Routes.home);
                           },
-                          child: const Text(
+                          child: Text(
                             'Voltar a home',
-                            style: TextStyle(
+                            style: GoogleFonts.robotoMono(
                               color: Colors.black,
-                              fontFamily: 'Cristik',
-                              fontSize: 30,
                             ),
                           ),
                         )

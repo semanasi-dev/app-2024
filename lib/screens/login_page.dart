@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
@@ -51,48 +52,30 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(
                               height: screenSize.height * 0.025,
                             ),
-                            const Text(
+                            Text(
                               'Bem Vindo',
-                              style: TextStyle(
-                                color: Colors.white,
-                                decoration: TextDecoration.none,
-                                fontSize: 30,
-                                fontFamily: 'Cristik',
-                              ),
+                              style:
+                                  GoogleFonts.robotoMono(color: Colors.white),
                             ),
-                            const Text(
+                            Text(
                               'MaterCode 2024',
-                              style: TextStyle(
-                                color: Colors.white,
-                                decoration: TextDecoration.none,
-                                fontSize: 30,
-                                fontFamily: 'Cristik',
-                              ),
+                              style:
+                                  GoogleFonts.robotoMono(color: Colors.white),
                             ),
                           ],
                         ),
-                        const Text(
+                        Text(
                           'Semana Academica Sistemas de Informacao',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            decoration: TextDecoration.none,
-                            fontSize: 18,
-                            fontFamily: 'Cristik',
-                          ),
+                          style: GoogleFonts.robotoMono(color: Colors.white),
                         ),
                         SizedBox(
                           height: screenSize.height * 0.05,
                         ),
-                        const Text(
+                        Text(
                           'autentique com google para iniciar',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            decoration: TextDecoration.none,
-                            fontSize: 18,
-                            fontFamily: 'Cristik',
-                          ),
+                          style: GoogleFonts.robotoMono(color: Colors.white),
                         ),
                         SizedBox(
                           height: screenSize.height * 0.02,
@@ -114,12 +97,10 @@ class _LoginPageState extends State<LoginPage> {
                                   width: screenSize.width * 0.08,
                                   fit: BoxFit.fill,
                                 ),
-                                const Text(
+                                Text(
                                   'Entrar com google',
-                                  style: TextStyle(
+                                  style: GoogleFonts.robotoMono(
                                     color: Colors.black,
-                                    decoration: TextDecoration.none,
-                                    fontSize: 20,
                                   ),
                                 )
                               ],

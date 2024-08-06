@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:qrcode_reader_web/qrcode_reader_web.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
@@ -27,6 +28,7 @@ class _QRPageState extends State<QRPage> {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.sizeOf(context);
     return SafeArea(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -39,45 +41,46 @@ class _QRPageState extends State<QRPage> {
                 width: constraints.maxWidth,
                 height: constraints.maxHeight,
               ),
-              Center(
-                child: SizedBox(
-                  width: 400,
-                  height: 400,
-                  child: QRCodeReaderTransparentWidget(
-                    onDetect: (QRCodeCapture capture) async {
-                      await atualizaPontuacao(capture.raw);
-                      Navigator.pushNamed(context, Routes.congratulations);
-                    },
-                    borderRadius: 20,
-                    targetSize: 0,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: 150),
-                child: const Column(
-                  children: [
-                    Icon(
-                      Icons.camera_alt_outlined,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Aponte a camera para o QR code para garantir os pontos',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      const Icon(
+                        Icons.camera_alt_outlined,
                         color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        decoration: TextDecoration.none,
-                        fontFamily: 'Cristik',
+                        size: 30,
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SelectableText(
+                        'Aponte a camera para o QR code para garantir os pontos',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.robotoMono(
+                          color: Colors.white,
+                          decoration: TextDecoration.none,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenSize.height * 0.035,
+                  ),
+                  SizedBox(
+                    width: screenSize.width * 0.8,
+                    height: screenSize.height * 0.4,
+                    child: QRCodeReaderTransparentWidget(
+                      onDetect: (QRCodeCapture capture) async {
+                        await atualizaPontuacao(capture.raw);
+                        Navigator.pushNamed(context, Routes.congratulations);
+                      },
+                      borderRadius: 20,
+                      targetSize: 0,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               Container(
                 padding: const EdgeInsets.only(top: 30, left: 30),
@@ -94,7 +97,6 @@ class _QRPageState extends State<QRPage> {
                   ),
                 ),
               ),
-              if (data != null) Text(data!.raw)
             ],
           );
         },
