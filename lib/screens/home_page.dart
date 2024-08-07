@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 
 import 'package:sasiqrcode/routes/routes.dart';
+import 'package:sasiqrcode/screens/responsive_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,134 +16,164 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? total;
+  bool isLoading = true;
+
+  Future<String>? total;
 
   @override
   void initState() {
     super.initState();
-    totalDePontos();
+    total = totalDePontos();
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.sizeOf(context);
 
-    return SafeArea(
-      child: Scaffold(
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return SizedBox(
-              height: constraints.maxHeight,
-              width: constraints.maxWidth,
-              child: Stack(
+    return screenSize.width > 600
+        ? const ResponsivePage()
+        : SafeArea(
+            child: Scaffold(
+              body: Stack(
+                alignment: Alignment.center,
                 children: [
                   Image.asset(
                     './lib/assets/background.jpeg',
                     fit: BoxFit.cover,
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
+                    height: double.infinity,
                   ),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, Routes.info);
-                          },
-                          child: Container(
-                            height: screenSize.height * 0.25,
-                            width: screenSize.width * 0.55,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.blueAccent,
-                                width: screenSize.width * 0.015,
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.info_outline_rounded,
-                                  size: screenSize.width * 0.2,
-                                ),
-                                Text(
-                                  'informações',
-                                  style: GoogleFonts.robotoMono(
-                                    color: Colors.black,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: screenSize.height * 0.05,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, Routes.qrcode);
-                          },
-                          child: Container(
-                            height: screenSize.height * 0.25,
-                            width: screenSize.width * 0.55,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.blueAccent,
-                                width: screenSize.width * 0.015,
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.qr_code_2_outlined,
-                                  size: screenSize.width * 0.25,
-                                ),
-                                Text(
-                                  'Ler QrCode',
-                                  style: GoogleFonts.robotoMono(
-                                    color: Colors.black,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: screenSize.height * 0.05,
-                        ),
-                        Text(
-                          total!,
-                          style: GoogleFonts.robotoMono(
+                  isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
                             color: Colors.white,
                           ),
-                        ),
-                        Text(
-                          'Pontuacao atual',
-                          style: GoogleFonts.robotoMono(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, Routes.info);
+                              },
+                              child: Container(
+                                height: screenSize.height * 0.25,
+                                width: screenSize.width * 0.55,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: Colors.blueAccent,
+                                    width: screenSize.width * 0.015,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline_rounded,
+                                      size: screenSize.aspectRatio * 250,
+                                    ),
+                                    SelectableText(
+                                      'informações',
+                                      style: GoogleFonts.robotoMono(
+                                        color: Colors.black,
+                                        fontSize: screenSize.aspectRatio * 50,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: screenSize.height * 0.05,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, Routes.qrcode);
+                              },
+                              child: Container(
+                                height: screenSize.height * 0.25,
+                                width: screenSize.width * 0.55,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: Colors.blueAccent,
+                                    width: screenSize.width * 0.015,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.qr_code_2_outlined,
+                                      size: screenSize.aspectRatio * 250,
+                                    ),
+                                    SelectableText(
+                                      'Ler QrCode',
+                                      style: GoogleFonts.robotoMono(
+                                        color: Colors.black,
+                                        fontSize: screenSize.aspectRatio * 50,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: screenSize.height * 0.05,
+                            ),
+                            SelectableText(
+                              'Pontuação atual',
+                              style: GoogleFonts.robotoMono(
+                                color: Colors.white,
+                                fontSize: screenSize.aspectRatio * 50,
+                              ),
+                            ),
+                            FutureBuilder<String>(
+                              future: total,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                    'Erro ao carregar pontuação',
+                                    style: GoogleFonts.robotoMono(
+                                      color: Colors.white,
+                                      fontSize: screenSize.aspectRatio * 70,
+                                    ),
+                                  );
+                                } else {
+                                  return SelectableText(
+                                    snapshot.data ?? '0',
+                                    style: GoogleFonts.robotoMono(
+                                      color: Colors.white,
+                                      fontSize: screenSize.aspectRatio * 70,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        )
                 ],
               ),
-            );
-          },
-        ),
-      ),
-    );
+            ),
+          );
   }
 
-  Future<void> totalDePontos() async {
+  Future<String> totalDePontos() async {
     User userUid = Provider.of<UserModel>(context, listen: false).userUid!;
 
     final DatabaseReference database = FirebaseDatabase.instance.ref('users');
@@ -151,8 +182,7 @@ class _HomePageState extends State<HomePage> {
     DataSnapshot snapshot = await userRef.get();
 
     Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-    setState(() {
-      total = data['pontos'].toString();
-    });
+
+    return data['pontos'].toString();
   }
 }

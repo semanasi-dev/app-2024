@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:qrcode_reader_web/qrcode_reader_web.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
+import 'package:sasiqrcode/screens/responsive_page.dart';
 
 class QRPage extends StatefulWidget {
   const QRPage({super.key});
@@ -16,92 +17,99 @@ class QRPage extends StatefulWidget {
 }
 
 class _QRPageState extends State<QRPage> {
+  bool isLoading = true;
+
   GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRCodeCapture? data;
 
   final DatabaseReference _database = FirebaseDatabase.instance.ref('users');
 
   @override
-  void dispose() {
-    super.dispose();
+  void initState() {
+    super.initState();
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.sizeOf(context);
-    return SafeArea(
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.asset(
-                './lib/assets/background.jpeg',
-                fit: BoxFit.cover,
-                width: constraints.maxWidth,
-                height: constraints.maxHeight,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      const Icon(
-                        Icons.camera_alt_outlined,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      SelectableText(
-                        'Aponte a camera para o QR code para garantir os pontos',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.robotoMono(
+    return screenSize.width > 600
+        ? const ResponsivePage()
+        : SafeArea(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  './lib/assets/background.jpeg',
+                  fit: BoxFit.cover,
+                  height: double.infinity,
+                ),
+                isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
                           color: Colors.white,
-                          decoration: TextDecoration.none,
-                          fontSize: 20,
                         ),
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.camera_alt_outlined,
+                                color: Colors.white,
+                                size: screenSize.aspectRatio * 100,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              SelectableText(
+                                'Aponte a camera para o QR code para garantir os pontos',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.robotoMono(
+                                  color: Colors.white,
+                                  decoration: TextDecoration.none,
+                                  fontSize: screenSize.aspectRatio * 40,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: screenSize.height * 0.035,
+                          ),
+                          SizedBox(
+                            width: screenSize.width * 0.8,
+                            height: screenSize.height * 0.4,
+                            child: QRCodeReaderTransparentWidget(
+                              onDetect: (QRCodeCapture capture) async {
+                                await atualizaPontuacao(capture.raw);
+                                Navigator.pushNamed(
+                                    context, Routes.congratulations);
+                              },
+                              borderRadius: 20,
+                              targetSize: 0,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: screenSize.height * 0.035,
-                  ),
-                  SizedBox(
-                    width: screenSize.width * 0.8,
-                    height: screenSize.height * 0.4,
-                    child: QRCodeReaderTransparentWidget(
-                      onDetect: (QRCodeCapture capture) async {
-                        await atualizaPontuacao(capture.raw);
-                        Navigator.pushNamed(context, Routes.congratulations);
+                Container(
+                  padding: const EdgeInsets.only(top: 30, left: 30),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
-                      borderRadius: 20,
-                      targetSize: 0,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: 30, left: 30),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
-        },
-      ),
-    );
   }
 
   Future<void> atualizaPontuacao(String pontos) async {

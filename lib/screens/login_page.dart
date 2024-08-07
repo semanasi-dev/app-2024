@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
+import 'package:sasiqrcode/screens/responsive_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,104 +20,99 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.sizeOf(context);
-    return SafeArea(
-      child: Scaffold(
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return SizedBox(
-              height: constraints.maxHeight,
-              width: constraints.maxWidth,
-              child: Stack(
+    return screenSize.width > 600
+        ? const ResponsivePage()
+        : SafeArea(
+            child: Scaffold(
+              body: Stack(
                 alignment: Alignment.center,
                 children: [
                   Image.asset(
                     './lib/assets/background.jpeg',
                     fit: BoxFit.cover,
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
+                    height: double.infinity,
                   ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(30.0, 50.0, 30.0, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: screenSize.height * 0.15,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset('./lib/assets/logoBranco.png',
-                                fit: BoxFit.cover,
-                                width: screenSize.width * 0.3),
-                            SizedBox(
-                              height: screenSize.height * 0.025,
-                            ),
-                            Text(
-                              'Bem Vindo',
-                              style:
-                                  GoogleFonts.robotoMono(color: Colors.white),
-                            ),
-                            Text(
-                              'MaterCode 2024',
-                              style:
-                                  GoogleFonts.robotoMono(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Semana Academica Sistemas de Informacao',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: screenSize.height * 0.05,
-                        ),
-                        Text(
-                          'autentique com google para iniciar',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: screenSize.height * 0.02,
-                        ),
-                        SizedBox(
-                          width: screenSize.width * 0.7,
-                          height: screenSize.height * 0.05,
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              UserCredential login = await signInWithGoogle();
-                              await verificaUsuarioExistente(login);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  './lib/assets/googleLogo.png',
-                                  width: screenSize.width * 0.08,
-                                  fit: BoxFit.fill,
-                                ),
-                                Text(
-                                  'Entrar com google',
-                                  style: GoogleFonts.robotoMono(
-                                    color: Colors.black,
-                                  ),
-                                )
-                              ],
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            './lib/assets/logoBranco.png',
+                            fit: BoxFit.cover,
+                            width: screenSize.aspectRatio * 330,
+                          ),
+                          SizedBox(
+                            height: screenSize.width * 0.025,
+                          ),
+                          SelectableText(
+                            'MaterCode 2024',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.robotoMono(
+                              color: Colors.white,
+                              fontSize: screenSize.aspectRatio * 80,
                             ),
                           ),
-                        )
-                      ],
-                    ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: screenSize.width * 0.025,
+                      ),
+                      SelectableText(
+                        'Semana acadêmica sistemas de informação 2024',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.robotoMono(
+                          color: Colors.white,
+                          fontSize: screenSize.aspectRatio * 50,
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenSize.height * 0.03,
+                      ),
+                      SelectableText(
+                        'autentique com google para iniciar',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.robotoMono(
+                          color: Colors.white,
+                          fontSize: screenSize.aspectRatio * 30,
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenSize.height * 0.02,
+                      ),
+                      SizedBox(
+                        width: screenSize.width * 0.5,
+                        height: screenSize.height * 0.05,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            UserCredential login = await signInWithGoogle();
+                            await verificaUsuarioExistente(login);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                './lib/assets/googleLogo.png',
+                                width: screenSize.width * 0.08,
+                                fit: BoxFit.fill,
+                              ),
+                              const Text(
+                                'Entrar com google',
+                                style: TextStyle(color: Colors.black),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ],
               ),
-            );
-          },
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   Future<UserCredential> signInWithGoogle() async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sasiqrcode/screens/responsive_page.dart';
 
 class InfoPage extends StatefulWidget {
   const InfoPage({super.key});
@@ -10,27 +11,21 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return SizedBox(
-              height: constraints.maxHeight,
-              width: constraints.maxWidth,
-              child: Stack(
+    Size screenSize = MediaQuery.sizeOf(context);
+    return screenSize.width > 600
+        ? const ResponsivePage()
+        : SafeArea(
+            child: Scaffold(
+              body: Stack(
                 children: [
                   Image.asset(
                     './lib/assets/background.jpeg',
                     fit: BoxFit.cover,
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
+                    height: double.infinity,
                   ),
                 ],
               ),
-            );
-          },
-        ),
-      ),
-    );
+            ),
+          );
   }
 }

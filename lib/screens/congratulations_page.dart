@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sasiqrcode/provider/user_model.dart';
 import 'package:sasiqrcode/routes/routes.dart';
+import 'package:sasiqrcode/screens/responsive_page.dart';
 
 class CongratulationsPage extends StatefulWidget {
   const CongratulationsPage({super.key});
@@ -14,65 +15,110 @@ class CongratulationsPage extends StatefulWidget {
 }
 
 class CongratulationsStatePage extends State<CongratulationsPage> {
-  String? total;
+  bool isLoading = true;
+  Future<String>? total;
 
   @override
   void initState() {
     super.initState();
-    totalDePontos();
+    total = totalDePontos();
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return SizedBox(
-              height: constraints.maxHeight,
-              width: constraints.maxWidth,
-              child: Stack(
+    Size screenSize = MediaQuery.sizeOf(context);
+    return screenSize.width > 600
+        ? const ResponsivePage()
+        : SafeArea(
+            child: Scaffold(
+              body: Stack(
                 children: [
                   Image.asset(
                     './lib/assets/background.jpeg',
                     fit: BoxFit.cover,
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
+                    height: double.infinity,
                   ),
                   Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Parabens $total',
-                          style: GoogleFonts.robotoMono(
-                            color: Colors.black,
+                    child: isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                './lib/assets/logoBranco.png',
+                                fit: BoxFit.cover,
+                                width: screenSize.aspectRatio * 330,
+                              ),
+                              SizedBox(
+                                height: screenSize.height * 0.02,
+                              ),
+                              FutureBuilder<String>(
+                                future: total,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      'Erro ao carregar pontuação',
+                                      style: GoogleFonts.robotoMono(
+                                        color: Colors.white,
+                                        fontSize: screenSize.aspectRatio * 70,
+                                      ),
+                                    );
+                                  } else {
+                                    return SelectableText(
+                                      'Pontuação atual: ${snapshot.data ?? '0'}',
+                                      style: GoogleFonts.robotoMono(
+                                        color: Colors.white,
+                                        fontSize: screenSize.aspectRatio * 70,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              SizedBox(
+                                height: screenSize.height * 0.02,
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, Routes.home);
+                                },
+                                style: ButtonStyle(
+                                  shape: WidgetStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      WidgetStateProperty.all<Color>(
+                                          Colors.white),
+                                ),
+                                child: Text(
+                                  'Voltar a tela inicial',
+                                  style: GoogleFonts.robotoMono(
+                                    color: Colors.black,
+                                    fontSize: screenSize.aspectRatio * 40,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, Routes.home);
-                          },
-                          child: Text(
-                            'Voltar a home',
-                            style: GoogleFonts.robotoMono(
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
                   )
                 ],
               ),
-            );
-          },
-        ),
-      ),
-    );
+            ),
+          );
   }
 
-  Future<void> totalDePontos() async {
+  Future<String> totalDePontos() async {
     User userUid = Provider.of<UserModel>(context, listen: false).userUid!;
 
     final DatabaseReference database = FirebaseDatabase.instance.ref('users');
@@ -81,8 +127,6 @@ class CongratulationsStatePage extends State<CongratulationsPage> {
     DataSnapshot snapshot = await userRef.get();
 
     Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-    setState(() {
-      total = data['pontos'].toString();
-    });
+    return data['pontos'].toString();
   }
 }
