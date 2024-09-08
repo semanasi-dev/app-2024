@@ -17,6 +17,7 @@ dependencies:
   google_sign_in: ^6.2.1
   provider: ^6.1.2
   firebase_database: ^11.0.3
+  flutter_dotenv: ^5.1.0
 
   qrcode_reader_web:
     git:
@@ -24,6 +25,7 @@ dependencies:
 
   cupertino_icons: ^1.0.6
   google_fonts: ^6.2.1
+  flutter_triple: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -40,4 +42,5 @@ flutter:
     - ./lib/assets/background.jpeg
     - ./lib/assets/googleLogo.png
     - ./lib/assets/logoBranco.png
-    - ./lib/assets/acenando.png
+    - ./lib/assets/linkedin.png
+    - .env

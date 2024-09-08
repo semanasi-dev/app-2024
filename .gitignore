@@ -96,3 +96,4 @@ coverage/
 
 index.html
 main.dart
+*.env
